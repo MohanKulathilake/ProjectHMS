@@ -5,7 +5,6 @@
 </head>
 <body>
 
-		
 						
 					    <div class="list-group bg-primary" style="height: 90vh;">
 						<a href="index.php" class="list-group-item list-group-item-action bg-primary text-center text-white">Dashboard</a>
