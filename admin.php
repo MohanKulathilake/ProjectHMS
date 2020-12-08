@@ -5,7 +5,13 @@ session_start();
 
 <!DOCTYPE html>
 <html>
-<head>
+<head> 	<script type="text/javascript">
+ 		function preback(){window.history.forward();}
+ 		setTimeout("preback()",0);
+ 		window.onunload=function(){null};
+
+
+ 	</script>
 	<title>Admin</title>
 </head>
 <body>
@@ -30,68 +36,115 @@ include("../include/connection.php");
 			<div class="col-md-12">
 				<div class="row">
 					<div class="col-md-6">
-						<h5 class="text-center">All Admins</h5>
+					<h5 class="text-center">All Admins</h5>
 
 
 
-						<?php 
+						<div class="table-responsive">
 
-							$ad = $_SESSION['admin'];
-							$query = "SELECT * FROM admin WHERE username !='$ad'";
-							$res = mysqli_query($connect,$query);
+							<?php 
 
-							$output = "<table class='table table-bordered'>
-							<tr>
-									<th>ID</th>
-									<th>Username</th>
-									<th style='width: 10%'>Action</th>
-							<tr>
-							";
+								$query = "SELECT * FROM admin";
+								$query_run = mysqli_query($connect,$query);
 
 
-							if (mysqli_num_rows($res) < 1 ){
-								$output .=  "<tr><td colspan='3' class= 'text-center'>No New Admins</td></tr>";
-							}
+							 ?>
 
-							while ($row = mysqli_fetch_array($res)) {
-
-								$id = $row['id'];
-								$username = $row['username'];
-
-								$output .="
-
+							<table class="table table-bordered" id="dataTable" style="width: 500px;" >
+								<thead>
 									<tr>
-										<td>$id</td>
-										<td>$username</td>
-										<td> 
-										<a href='admin?id=$id'><button id='$id' class='btn btn-danger remove'>Remove</button></a>
-										</td>
-								";
-							}
+										<th>Id</th>
+										<th>Username</th>
+										<th>Password</th>
+										<th>Action</th>
+
+									</tr>
+
+								</thead>
+						
+							<tbody>
+
+									<?php 
+
+										if (mysqli_num_rows($query_run)  > 0) 
+										{
+												
+												while ($row = mysqli_fetch_assoc($query_run)) 
+												{
+													
+													?>
 
 
-							$output .="
+										
+
+
+
+								<tr>
+
+									<td> <?php echo $row['id']; ?></td>
+									<td> <?php echo $row['username']; ?></td>
+									<td> <?php echo $row['password']; ?></td>
+
+									<td>
+										<form method="post"> 
+											<input type="hidden" name="delete_id" value="<?php echo $row['id']; ?>">
+										<button type="submit" name="delete_btn" class="btn btn-danger">Remove</button>
+										</form>
+									</td>
+									
+									
 
 								</tr>
-									
-								</table>
 
-							";
+												<?php 	
+																								
+												}										
+										}
+										else{
+												echo "No New User";
+										}
+									 ?>
 
-							echo $output;
-											if (isset($_GET['id'])) {
-								$id= $_GET['id'];
-								$query = "DELETE FROM admin WHERE id='$id'";
-								mysqli_query($connect,$query);
-								
-							}
+
+							</tbody>
+							
+
+
+						</div>
+
+					</table>
+
+
+					<?php 
+
+
+if (isset($_POST['delete_btn'])) 
+{
+	$id = $_POST['delete_id'];
+	$query = "DELETE FROM admin WHERE id='$id' ";
+	$query_run =mysqli_query($connect, $query);
+
+	if ($query_run)
+
+	{
+				
+	}
+	else
+	{
+
+		
+
+	}	
+}
+
+?>
 
 						
-						 ?>
 
 
 					</div>
 					<div class="col-md-6">
+
 						<?php 
 
 							if (isset($_POST['add'])) {
@@ -114,7 +167,7 @@ include("../include/connection.php");
 
 								if (count($error) ==0) {
 
-									$q ="INSERT INTO admin(username,password,profile) VALUES('$uname','password','image')";
+									$q ="INSERT INTO admin(username,password,profile) VALUES('$uname','$pass','$image')";
 									# code...
 									$result =mysqli_query($connect,$q);
 									if ($result) {
@@ -138,6 +191,8 @@ include("../include/connection.php");
 
 
 						 ?>
+						 <br>
+						 
 						<h5 class="text-center">Add New Admin</h5>
 						<form  method="post" enctype="multipart/form-data">
 							<div>
